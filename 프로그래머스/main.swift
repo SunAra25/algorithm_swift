@@ -1,5 +1,5 @@
 //  Created by 아라 on 2023/05/08.
-//  소요시간 : 0.0004940032958984375
+//  소요시간 : 0.0011448860168457031
 
 import Foundation
 
@@ -10,16 +10,33 @@ public func checkTime(_ closure: () -> ()) -> TimeInterval {
     return diff
 }
 
-func solution(_ array:[Int], _ commands:[[Int]]) -> [Int] {
-    var answer = [Int]()
-    for c in commands {
-        var arr = Array(array[(c[0] - 1)..<c[1]])
-        arr.sort()
-        answer.append(arr[c[2] - 1])
+func solution(_ dartResult:String) -> Int {
+    var scores = dartResult.split(whereSeparator: { !$0.isNumber }).compactMap { Int($0) }
+    let letters = dartResult.split(whereSeparator: { $0.isNumber })
+ 
+    for i in 0..<scores.count {
+        let bonus = letters[i].first!
+        let option = letters[i].last!
+        
+        switch bonus {
+            case "D" : scores[i] = scores[i] * scores[i]
+            case "T" : scores[i] = scores[i] * scores[i] * scores[i]
+            default : scores[i] = scores[i]
+        }
+        if option == "*" {
+            if i > 0 {
+                scores[i-1] *= 2
+            }
+            scores[i] *= 2
+        }
+        if option == "#" {
+            scores[i] *= -1
+        }
     }
-    return answer
+    
+    return scores.reduce (0, +)
 }
 
 print(checkTime {
-    print(solution([1, 5, 2, 6, 3, 7, 4],[[2, 5, 3], [4, 4, 1], [1, 7, 3]]))
+    print(solution("1S2D*3T"))
 })
